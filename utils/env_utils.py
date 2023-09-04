@@ -2,13 +2,13 @@ import math
 import numba as nb
 import airsim
 import numpy as np
+import copy
 
 from airsim_plugin.airsim_settings import AirsimActions, AirsimActionSettings
 
 from src.common.param import args
 
 from utils.logger import logger
-from utils.collision_detection import Collision
 from utils.shorest_path_sensor import ShortestPathSensor, EuclideanDistance3, EuclideanDistance1
 
 
@@ -20,44 +20,20 @@ class SimState:
                  ):
         self.index = index
         self.step = step
-        self.episode_info = episode_info
+        self.episode_info = copy.deepcopy(episode_info)
 
         self.pose = pose
         self.trajectory = []
         self.is_end = False
 
-        #
-        # self.SUCCESS_DISTANCE = abs(np.linalg.norm(
-        #     np.array(episode_info['reference_path'][0])[0:3] - np.array(episode_info['reference_path'][-1])[0:3],
-        #     ord=2
-        # )) * args.SUCCESS_DISTANCE_SCALE
-        self.SUCCESS_DISTANCE = 16
+        self.SUCCESS_DISTANCE = 20
 
         self.DistanceToGoal = {
             '_metric': 0,
             '_previous_position': None,
-            '_metric_3d': 0,
-        }
-        self.OracleNavigationError = {
-            '_metric': float("inf")
         }
         self.Success = {
             '_metric': 0,
-        }
-        self.SPL = {
-            '_metric': 0,
-            '_agent_episode_distance': 0.0,
-            '_previous_position': None,
-            '_start_end_episode_distance': None,
-        }
-        self.SoftSPL = {
-            '_metric': 0,
-            '_agent_episode_distance': 0.0,
-            '_previous_position': None,
-            '_start_end_episode_distance': None,
-        }
-        self.OracleSPL = {
-            '_metric': 0.0,
         }
         self.NDTW = {
             '_metric': 0,
@@ -107,11 +83,8 @@ class ENV:
             for scen_id in load_scenes:
                 self.nav_graph_token_dict[scen_id] = self.shortest_path_sensor.token_dicts[scen_id]
 
-        if args.run_type in ['eval', 'eval_random_agent'] and not args.collision_sensor_disabled:
-            self.collision_sensor = Collision(args.vertices_path, load_scenes=load_scenes)
-
     def set_batch(self, batch):
-        self.batch = batch
+        self.batch = copy.deepcopy(batch)
         return
 
     def get_obs_at(self, index: int, state):
@@ -127,7 +100,7 @@ class ENV:
                 teacher_action = item['actions'][state.step]
                 done = state.is_end
                 progress = state.step / len(item['actions'])
-        elif args.run_type in ['eval', 'eval_random_agent'] and args.collect_type in ['TF']:
+        elif args.run_type in ['eval'] and args.collect_type in ['TF']:
             teacher_action = AirsimActions.STOP
             done = state.is_end
             if not done:
@@ -143,7 +116,7 @@ class ENV:
 
             done = state.is_end
             progress, state = get_progress_sensor_at(index, state, self.nav_graph_token_dict, self.shortest_path_sensor)
-        elif args.run_type in ['eval', 'eval_random_agent'] and args.collect_type in ['dagger', 'SF']:
+        elif args.run_type in ['eval'] and args.collect_type in ['dagger', 'SF']:
             teacher_action = AirsimActions.STOP
             done = state.is_end
             if not done:
@@ -156,22 +129,6 @@ class ENV:
             raise NotImplementedError
 
         return (teacher_action, done, progress), state
-
-    def get_collision_sensor_result_at(self, index, state) -> bool:
-        if args.run_type not in ['eval', 'eval_random_agent']:
-            return False
-
-        scene_id = int(state.episode_info['scene_id'])
-
-        if len(state.trajectory) < 2:
-            return False
-        point_source = np.array(state.trajectory[-2][0:3])
-
-        point_target = np.array(state.trajectory[-1][0:3])
-
-        is_collision = self.collision_sensor.IsCollision(point_source, point_target, scene_id)
-
-        return is_collision
 
 
 def get_teacher_action_at(index: int, state: SimState, nav_graph_token_dict: dict, shortest_path_sensor: ShortestPathSensor):

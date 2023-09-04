@@ -606,29 +606,8 @@ def collect_data(trainer, train_env, data_it=0):
                     dtype=torch.uint8,
                     device=trainer.device,
                 )
-            elif args.policy_type in ['hcm']:
-                rnn_states = torch.zeros(
-                    trainer.policy.net.num_recurrent_layers,
-                    train_env.batch_size,
-                    trainer.policy.net.state_encoder.hidden_size,
-                    device=trainer.device,
-                )
-                prev_actions = torch.zeros(
-                    train_env.batch_size,
-                    1,
-                    dtype=torch.long,
-                    device=trainer.device,
-                )
-                not_done_masks = torch.zeros(
-                    train_env.batch_size,
-                    1,
-                    dtype=torch.uint8,
-                    device=trainer.device,
-                )
             else:
                 raise NotImplementedError
-
-            # rgb_frames = [[] for _ in range(train_env.batch_size)]
 
             episodes = [[] for _ in range(train_env.batch_size)]
             skips = [False for _ in range(train_env.batch_size)]
@@ -792,14 +771,6 @@ def collect_data(trainer, train_env, data_it=0):
                     device=trainer.device,
                 )
 
-                # for i in range(train_env.batch_size):
-                #     frame = observations_to_image(observations[i], infos[i])
-                #     frame = append_text_to_image(
-                #         frame, train_env.batch[i]['instruction']['instruction_text']
-                #     )
-                #     rgb_frames[i].append(frame)
-
-            #
             for i in range(train_env.batch_size):
                 if dones[i] and not t >= int(args.maxAction):
                     continue
@@ -890,29 +861,17 @@ def collect_data(trainer, train_env, data_it=0):
                     envs_to_pause.append(i)
                     skips[i] = True
 
-            # #
-            # for t in range(int(train_env.batch_size)):
-            #     generate_video(
-            #         video_option=["disk"],
-            #         video_dir=str(
-            #             Path(args.project_prefix) / 'DATA/videos/{}'.format(args.make_dir_time)
-            #         ),
-            #         images=rgb_frames[t],
-            #         episode_id=train_env.batch[t]['episode_id'],
-            #         checkpoint_idx=0,
-            #         metrics={
-            #             # "spl": infos[t]['spl'],
-            #             "ndtw": infos[t]['ndtw'],
-            #         },
-            #         tb_writer=None,
-            #     )
+    try:
+        pbar.close()
+    except:
+        pass
 
     if rgb_hook is not None:
         rgb_hook.remove()
     if depth_hook is not None:
         depth_hook.remove()
 
-    # 备份数据库
+    #
     if dagger_it == 0 and is_main_process():
         try:
             copytree_src = str(Path(str(train_env.lmdb_features_dir)).parent)
@@ -1158,7 +1117,7 @@ def eval_vlnce():
                 current_ckpt = poll_checkpoint_folder(
                     args.EVAL_CKPT_PATH_DIR, prev_ckpt_ind
                 )
-                time.sleep(2)  # sleep for 2 secs before polling again
+                time.sleep(2)
             logger.info(f"=======current_ckpt: {current_ckpt}=======")
             prev_ckpt_ind += 1
 
@@ -1344,7 +1303,6 @@ def _eval_checkpoint(
             for t in range(int(train_env.batch_size)):
                 stats_episodes[str(train_env.batch[t]['episode_id'])] = infos[t]
 
-                #
                 EVAL_SAVE_EVERY_RESULTS_DIR = Path(args.project_prefix) / 'DATA/output/{}/eval/intermediate_results_every/{}'.format(args.name, args.make_dir_time)
                 if not os.path.exists(str(EVAL_SAVE_EVERY_RESULTS_DIR / str(checkpoint_index))):
                     os.makedirs(str(EVAL_SAVE_EVERY_RESULTS_DIR / str(checkpoint_index)), exist_ok=True)
@@ -1357,7 +1315,6 @@ def _eval_checkpoint(
                 with open(f_intermediate_result_name, "w") as f:
                     json.dump(f_intermediate_trajectory, f)
 
-                #
                 if args.EVAL_GENERATE_VIDEO:
                     EVAL_GENERATE_VIDEO_DIR = Path(args.project_prefix) / 'DATA/output/{}/eval/videos/{}'.format(args.name, args.make_dir_time)
                     generate_video(
@@ -1376,11 +1333,7 @@ def _eval_checkpoint(
                 logger.info((
                     'result-{} \t' +
                     'distance_to_goal: {} \t' +
-                    'oracle_navigation_error: {} \t' +
                     'success: {} \t' +
-                    'spl: {} \t' +
-                    'soft_spl: {} \t' +
-                    'oracle_spl: {} \t' +
                     'ndtw: {} \t' +
                     'sdtw: {} \t' +
                     'path_length: {} \t' +
@@ -1389,11 +1342,7 @@ def _eval_checkpoint(
                 ).format(
                     t,
                     infos[t]['distance_to_goal'],
-                    infos[t]['oracle_navigation_error'],
                     infos[t]['success'],
-                    infos[t]['spl'],
-                    infos[t]['soft_spl'],
-                    infos[t]['oracle_spl'],
                     infos[t]['ndtw'],
                     infos[t]['sdtw'],
                     infos[t]['path_length'],

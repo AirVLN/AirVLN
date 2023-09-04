@@ -204,7 +204,7 @@ class AirVLNSimulatorClientTool:
                             assert response_rgb.height == args.Image_Height_RGB and response_rgb.width == args.Image_Width_RGB, 'RGB图片获取错误'
 
                             img1d = np.frombuffer(response_rgb.image_data_uint8, dtype=np.uint8)
-                            if args.run_type not in ['eval', 'eval_random_agent']:
+                            if args.run_type not in ['eval']:
                                 assert not (img1d.flatten()[0] == img1d).all(), 'RGB图片获取错误'
                             img_rgb = img1d.reshape(response_rgb.height, response_rgb.width, 3)
                             img_rgb = np.array(img_rgb)
@@ -265,11 +265,6 @@ class AirVLNSimulatorClientTool:
                             assert response_rgb.height == args.Image_Height_RGB and response_rgb.width == args.Image_Width_RGB, 'RGB图片获取错误'
 
                             img1d = np.frombuffer(response_rgb.image_data_uint8, dtype=np.uint8)
-                            # depth_img_in_meters = airsim.list_to_2d_float_array(response_depth.image_data_float, response_depth.width, response_depth.height)
-                            # if depth_img_in_meters.min() > 5 and depth_img_in_meters.max() > 10 and depth_img_in_meters.min() < 100 and \
-                            #         args.run_type not in ['eval', 'eval_random_agent'] and \
-                            #         args.collect_type not in ['dagger', 'SF']:
-                            #     assert not (img1d.flatten()[0] == img1d).all(), 'RGB图片获取错误'
                             img_rgb = img1d.reshape(response_rgb.height, response_rgb.width, 3)
                             img_rgb = np.array(img_rgb)
 

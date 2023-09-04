@@ -529,29 +529,10 @@ def collect_data(data_it=0):
             else:
                 pbar.update(n=train_env.index_data-pbar_pre_index)
 
-            if args.policy_type in ['seq2seq', 'cma', 'unet', 'vlnbert']:
+            if args.policy_type in ['seq2seq', 'cma']:
                 rnn_states = torch.zeros(
                     train_env.batch_size,
                     trainer.policy.net.num_recurrent_layers,
-                    trainer.policy.net.state_encoder.hidden_size,
-                    device=trainer.device,
-                )
-                prev_actions = torch.zeros(
-                    train_env.batch_size,
-                    1,
-                    dtype=torch.long,
-                    device=trainer.device,
-                )
-                not_done_masks = torch.zeros(
-                    train_env.batch_size,
-                    1,
-                    dtype=torch.uint8,
-                    device=trainer.device,
-                )
-            elif args.policy_type in ['hcm']:
-                rnn_states = torch.zeros(
-                    trainer.policy.net.num_recurrent_layers,
-                    train_env.batch_size,
                     trainer.policy.net.state_encoder.hidden_size,
                     device=trainer.device,
                 )
@@ -854,6 +835,10 @@ def collect_data(data_it=0):
                     envs_to_pause.append(i)
                     skips[i] = True
 
+    try:
+        pbar.close()
+    except:
+        pass
 
     if rgb_hook is not None:
         rgb_hook.remove()
@@ -950,38 +935,21 @@ def train_vlnce():
                     for k, v in observations_batch.items()
                 }
 
-                if args.policy_type in ['vlnbert']:
-                    loss, action_loss, aux_loss = trainer._update_agent(
-                        observations_batch,
-                        prev_actions_batch.view(-1, args.batchSize)[:args.maxAction, :].view(-1, 1).to(
-                            device=trainer.device, non_blocking=True
-                        ),
-                        not_done_masks.view(-1, args.batchSize)[:args.maxAction, :].view(-1, 1).to(
-                            device=trainer.device, non_blocking=True
-                        ),
-                        corrected_actions_batch.view(-1, args.batchSize)[:args.maxAction, :].view(-1, 1).to(
-                            device=trainer.device, non_blocking=True
-                        ),
-                        weights_batch.view(-1, args.batchSize)[:args.maxAction, :].view(-1, 1).to(
-                            device=trainer.device, non_blocking=True
-                        ),
-                    )
-                else:
-                    loss, action_loss, aux_loss = trainer._update_agent(
-                        observations_batch,
-                        prev_actions_batch.to(
-                            device=trainer.device, non_blocking=True
-                        ),
-                        not_done_masks.to(
-                            device=trainer.device, non_blocking=True
-                        ),
-                        corrected_actions_batch.to(
-                            device=trainer.device, non_blocking=True
-                        ),
-                        weights_batch.to(
-                            device=trainer.device, non_blocking=True
-                        ),
-                    )
+                loss, action_loss, aux_loss = trainer._update_agent(
+                    observations_batch,
+                    prev_actions_batch.to(
+                        device=trainer.device, non_blocking=True
+                    ),
+                    not_done_masks.to(
+                        device=trainer.device, non_blocking=True
+                    ),
+                    corrected_actions_batch.to(
+                        device=trainer.device, non_blocking=True
+                    ),
+                    weights_batch.to(
+                        device=trainer.device, non_blocking=True
+                    ),
+                )
 
                 logger.warning(
                     'dagger_it: {} / {} \t epoch: {} / {} \t batch: {} / {}'.format(
@@ -1019,8 +987,7 @@ def train_vlnce():
                 batch_cnt += 1
 
             if is_main_process():
-                if args.policy_type in ['vlnbert'] or \
-                        ((dagger_it * args.epochs + epoch)+1) % 5 == 0:
+                if ((dagger_it * args.epochs + epoch)+1) % 5 == 0:
                     trainer.save_checkpoint(
                         f"ckpt.{dagger_it * args.epochs + epoch}.pth",
                         dagger_it,
@@ -1082,7 +1049,6 @@ def eval_vlnce():
             logger.info(f"=======current_ckpt: {current_ckpt}=======")
             prev_ckpt_ind += 1
 
-            # 跳过
             if prev_ckpt_ind <= 2:
                 continue
 
@@ -1158,10 +1124,6 @@ def _eval_checkpoint(
         start_iter = 0
         end_iter = len(train_env.data)
         cnt = 0
-        if args.TF_test_one_scene:
-            flag_error_cnt = 0
-            flag_error_total_cnt = 0
-            TF_test_one_scene_progress_list = []
         for idx in range(start_iter, end_iter, train_env.batch_size):
             if args.EVAL_NUM != -1 and cnt * train_env.batch_size >= args.EVAL_NUM:
                 break
@@ -1191,46 +1153,6 @@ def _eval_checkpoint(
                     dtype=torch.uint8,
                     device=trainer.device,
                 )
-            elif args.policy_type in ['hcm']:
-                rnn_states = torch.zeros(
-                    trainer.policy.net.num_recurrent_layers,
-                    train_env.batch_size,
-                    trainer.policy.net.state_encoder.hidden_size,
-                    device=trainer.device,
-                )
-                prev_actions = torch.zeros(
-                    train_env.batch_size,
-                    1,
-                    dtype=torch.long,
-                    device=trainer.device,
-                )
-                not_done_masks = torch.zeros(
-                    train_env.batch_size,
-                    1,
-                    dtype=torch.uint8,
-                    device=trainer.device,
-                )
-            elif args.policy_type in ['unet']:
-                rnn_states = torch.zeros(
-                    train_env.batch_size,
-                    trainer.policy.net.num_recurrent_layers,
-                    trainer.policy.net.output_size,
-                    device=trainer.device,
-                )
-                prev_actions = torch.zeros(
-                    train_env.batch_size,
-                    1,
-                    dtype=torch.long,
-                    device=trainer.device,
-                )
-                not_done_masks = torch.zeros(
-                    train_env.batch_size,
-                    1,
-                    dtype=torch.uint8,
-                    device=trainer.device,
-                )
-            elif args.policy_type in ['vlnbert']:
-                raise NotImplementedError
             else:
                 raise NotImplementedError
 
@@ -1240,8 +1162,6 @@ def _eval_checkpoint(
             skips = [False for _ in range(train_env.batch_size)]
             dones = [False for _ in range(train_env.batch_size)]
             envs_to_pause = []
-            if args.TF_test_one_scene:
-                flag_error = [False for _ in range(train_env.batch_size)]
 
             outputs = train_env.reset()
             observations, _, dones, _ = [list(x) for x in zip(*outputs)]
@@ -1264,11 +1184,6 @@ def _eval_checkpoint(
 
                 # Make action and get the new state
                 actions = [temp[0] for temp in actions.cpu().numpy()]
-                if args.TF_test_one_scene:
-                    for action_index, action in enumerate(actions):
-                        if action != train_env.batch[action_index]['actions'][train_env.sim_states[action_index].step]:
-                            flag_error[action_index] = True
-                            train_env.sim_states[action_index].is_end = True
                 train_env.makeActions(actions)
 
                 outputs = train_env.get_obs()
@@ -1349,11 +1264,7 @@ def _eval_checkpoint(
                 logger.info((
                     'result-{} \t' +
                     'distance_to_goal: {} \t' +
-                    'oracle_navigation_error: {} \t' +
                     'success: {} \t' +
-                    'spl: {} \t' +
-                    'soft_spl: {} \t' +
-                    'oracle_spl: {} \t' +
                     'ndtw: {} \t' +
                     'sdtw: {} \t' +
                     'path_length: {} \t' +
@@ -1362,32 +1273,13 @@ def _eval_checkpoint(
                 ).format(
                     t,
                     infos[t]['distance_to_goal'],
-                    infos[t]['oracle_navigation_error'],
                     infos[t]['success'],
-                    infos[t]['spl'],
-                    infos[t]['soft_spl'],
-                    infos[t]['oracle_spl'],
                     infos[t]['ndtw'],
                     infos[t]['sdtw'],
                     infos[t]['path_length'],
                     infos[t]['oracle_success'],
                     infos[t]['steps_taken']
                 ))
-
-
-            if args.TF_test_one_scene:
-                flag_error_cnt += int(np.array(flag_error).sum())
-                flag_error_total_cnt += len(flag_error)
-                logger.info("flag_error_cnt: {} \t flag_error_total_cnt: {}".format(flag_error_cnt, flag_error_total_cnt))
-
-                for t in range(int(train_env.batch_size)):
-                    logger.info('process-{}/{}'.format(
-                        train_env.sim_states[t].step,
-                        len(train_env.batch[t]['actions']),
-                    ))
-                    TF_test_one_scene_progress_list.append([
-                        train_env.batch[t]['episode_id'], train_env.sim_states[t].step, len(train_env.batch[t]['actions'])
-                    ])
 
     # end
     pbar.close()
@@ -1442,234 +1334,6 @@ def _eval_checkpoint(
         logger.info(f"Average episode {k}: {v:.6f}")
         writer.add_scalar(f"eval_{train_env.split}_{k}", v, checkpoint_num)
 
-    if args.TF_test_one_scene:
-        logger.info("flag_error_cnt: {} \t flag_error_total_cnt: {}".format(flag_error_cnt, flag_error_total_cnt))
-
-        p_progress_1 = (np.array(TF_test_one_scene_progress_list)[:, 1]).astype(float).sum() / (np.array(TF_test_one_scene_progress_list)[:, 2]).astype(float).sum()
-        logger.info("average action progress_1: {}".format(p_progress_1))
-
-        p_progress_2 = ((np.array(TF_test_one_scene_progress_list)[:, 1]).astype(float) / (np.array(TF_test_one_scene_progress_list)[:, 2]).astype(float)).sum() / len(TF_test_one_scene_progress_list)
-        logger.info("average action progress_2: {}".format(p_progress_2))
-
-    try:
-        train_env.simulator_tool.closeScenes()
-    except:
-        pass
-
-
-def eval_random_agent():
-    logger.info(args)
-
-    seed = 1
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    random.seed(seed)
-    np.random.seed(seed)
-    cudnn.benchmark = False
-    cudnn.deterministic = False
-
-    writer = SummaryWriter(
-        log_dir=str(
-            Path(args.project_prefix) / 'DATA/output/{}/eval/TensorBoard/{}'.format(args.name, args.make_dir_time)),
-    )
-
-    tok = initialize_tokenizer()
-
-    if args.EVAL_DATASET == 'train':
-        train_env = AirVLNENV(batch_size=args.batchSize, split='train', tokenizer=tok)
-    elif args.EVAL_DATASET == 'val_seen':
-        train_env = AirVLNENV(batch_size=args.batchSize, split='val_seen', tokenizer=tok)
-    elif args.EVAL_DATASET == 'val_unseen':
-        train_env = AirVLNENV(batch_size=args.batchSize, split='val_unseen', tokenizer=tok)
-    elif args.EVAL_DATASET == 'test':
-        train_env = AirVLNENV(batch_size=args.batchSize, split='test', tokenizer=tok)
-    else:
-        raise KeyError
-
-
-    #
-    EVAL_RESULTS_DIR = Path(args.project_prefix) / 'DATA/output/{}/eval/results/{}'.format(args.name, args.make_dir_time)
-    fname = os.path.join(
-        EVAL_RESULTS_DIR,
-        f"stats_ckpt_{0}_{train_env.split}.json",
-    )
-    if os.path.exists(fname):
-        print("skipping -- evaluation exists.")
-        return
-
-
-    #
-    device = (
-        torch.device("cuda", args.trainer_gpu_device)
-        if torch.cuda.is_available()
-        else torch.device("cpu")
-    )
-    if torch.cuda.is_available():
-        with torch.cuda.device(device):
-            torch.cuda.empty_cache()
-    gc.collect()
-
-
-    # eval
-    stats_episodes = {}
-    episodes_to_eval = len(train_env.data)
-    pbar = tqdm.tqdm(total=episodes_to_eval, dynamic_ncols=True)
-
-    with torch.no_grad():
-        start_iter = 0
-        end_iter = len(train_env.data)
-        cnt = 0
-        for idx in range(start_iter, end_iter, train_env.batch_size):
-            if args.EVAL_NUM != -1 and cnt * train_env.batch_size >= args.EVAL_NUM:
-                break
-            cnt += 1
-
-            train_env.next_minibatch()
-            if train_env.batch is None:
-                logger.warning('train_env.batch is None, going to break and stop collect')
-                break
-
-            not_done_masks = torch.zeros(
-                train_env.batch_size,
-                1,
-                dtype=torch.uint8,
-                device=device,
-            )
-
-            skips = [False for _ in range(train_env.batch_size)]
-            dones = [False for _ in range(train_env.batch_size)]
-
-            outputs = train_env.reset()
-            _, _, dones, infos = [list(x) for x in zip(*outputs)]
-
-            for t in range(int(args.maxAction) + 1):
-                logger.info('checkpoint_index:{} \t {} - {} / {} \t {}'.format(0, idx, t, end_iter, not_done_masks.cpu().numpy().reshape((-1,)).tolist()))
-
-                action_probs = [(action_prob / np.array(action_probs).sum()) for action_prob in action_probs]
-                all_actions = [0, 1, 2, 3, 4, 5, 6, 7]
-                actions = [np.random.choice(all_actions, p=action_probs) for _ in range(train_env.batch_size)]
-
-                # Make action and get the new state
-                train_env.makeActions(actions)
-
-                outputs = train_env.get_obs()
-                _, _, dones, infos = [list(x) for x in zip(*outputs)]
-
-                logger.info('action: {}'.format(actions))
-
-                not_done_masks = torch.tensor(
-                    [[0] if done else [1] for done in dones],
-                    dtype=torch.uint8,
-                    device=device,
-                )
-
-                # reset envs and observations if necessary
-                for i in range(train_env.batch_size):
-                    if not dones[i] or skips[i]:
-                        continue
-
-                    skips[i] = True
-
-                if np.array(dones).all():
-                    break
-
-            for t in range(int(train_env.batch_size)):
-                stats_episodes[str(train_env.batch[t]['episode_id'])] = infos[t]
-
-                #
-                EVAL_SAVE_EVERY_RESULTS_DIR = Path(args.project_prefix) / 'DATA/output/{}/eval/intermediate_results_every/{}'.format(args.name, args.make_dir_time)
-                if not os.path.exists(str(Path(str(EVAL_SAVE_EVERY_RESULTS_DIR)) / str(0))):
-                    os.makedirs(str(Path(str(EVAL_SAVE_EVERY_RESULTS_DIR)) / str(0)), exist_ok=True)
-
-                f_intermediate_result_name = os.path.join(
-                    str(EVAL_SAVE_EVERY_RESULTS_DIR / str(0)),
-                    f"{train_env.batch[t]['episode_id']}.json",
-                )
-                f_intermediate_trajectory = {**infos[t]}
-                with open(f_intermediate_result_name, "w") as f:
-                    json.dump(f_intermediate_trajectory, f)
-
-                logger.info(
-                    ('result-{} \t' +
-                     'distance_to_goal: {} \t' +
-                     'oracle_navigation_error: {} \t' +
-                     'success: {} \t' +
-                     'spl: {} \t' +
-                     'soft_spl: {} \t' +
-                     'oracle_spl: {} \t' +
-                     'ndtw: {} \t' +
-                     'sdtw: {} \t' +
-                     'path_length: {} \t' +
-                     'oracle_success: {} \t' +
-                     'steps_taken: {}'
-                     ).format(
-                        t,
-                        infos[t]['distance_to_goal'],
-                        infos[t]['oracle_navigation_error'],
-                        infos[t]['success'],
-                        infos[t]['spl'],
-                        infos[t]['soft_spl'],
-                        infos[t]['oracle_spl'],
-                        infos[t]['ndtw'],
-                        infos[t]['sdtw'],
-                        infos[t]['path_length'],
-                        infos[t]['oracle_success'],
-                        infos[t]['steps_taken']
-                    )
-                )
-
-
-    # end
-    pbar.close()
-
-    #
-    EVAL_INTERMEDIATE_RESULTS_DIR = Path(args.project_prefix) / 'DATA/output/{}/eval/intermediate_results/{}'.format(args.name, args.make_dir_time)
-    f_intermediate_name = os.path.join(
-        EVAL_INTERMEDIATE_RESULTS_DIR,
-        f"stats_ckpt_{0}_{train_env.split}.json",
-    )
-    if not os.path.exists(EVAL_INTERMEDIATE_RESULTS_DIR):
-        os.makedirs(EVAL_INTERMEDIATE_RESULTS_DIR, exist_ok=True)
-    with open(f_intermediate_name, "w") as f:
-        json.dump(stats_episodes, f)
-
-    #
-    new_stats_episodes = {}
-    for i, j in stats_episodes.items():
-        temp_1 = {}
-        temp_1 = j.copy()
-
-        temp_2 = temp_1.copy()
-        for _i, _j in temp_2.items():
-            if type(_j) == str or type(_j) == list or type(_j) == dict:
-                del temp_1[_i]
-
-        new_stats_episodes[i] = temp_1.copy()
-    stats_episodes = new_stats_episodes.copy()
-
-    aggregated_stats = {}
-    num_episodes = len(stats_episodes)
-    for stat_key in next(iter(stats_episodes.values())).keys():
-        aggregated_stats[stat_key] = (
-            sum(v[stat_key] for v in stats_episodes.values())
-            / num_episodes
-        )
-
-    fname = os.path.join(
-        EVAL_RESULTS_DIR,
-        f"stats_ckpt_{0}_{train_env.split}.json",
-    )
-    if not os.path.exists(EVAL_RESULTS_DIR):
-        os.makedirs(EVAL_RESULTS_DIR, exist_ok=True)
-    with open(fname, "w") as f:
-        json.dump(aggregated_stats, f, indent=4)
-
-    logger.info(f"Episodes evaluated: {num_episodes}")
-    checkpoint_num = 1
-    for k, v in aggregated_stats.items():
-        logger.info(f"Average episode {k}: {v:.6f}")
-        writer.add_scalar(f"eval_random_agent_{k}", v, checkpoint_num)
-
     try:
         train_env.simulator_tool.closeScenes()
     except:
@@ -1685,7 +1349,6 @@ if __name__ == "__main__":
         train_vlnce()
     elif args.run_type == 'eval':
         eval_vlnce()
-    elif args.run_type == 'eval_random_agent':
-        eval_random_agent()
     else:
         raise NotImplementedError
+

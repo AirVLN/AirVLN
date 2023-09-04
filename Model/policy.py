@@ -35,13 +35,8 @@ class ILPolicy(nn.Module):
         deterministic=False,
         step=0,
     ):
-        if args.policy_type in ['seq2seq', 'cma', 'unet', 'vlnbert']:
+        if args.policy_type in ['seq2seq', 'cma']:
             features, rnn_hidden_states = self.net(
-                observations, rnn_hidden_states, prev_actions, masks
-            )
-
-        elif args.policy_type in ['hcm']:
-            features, rnn_hidden_states, stop_output = self.net(
                 observations, rnn_hidden_states, prev_actions, masks
             )
 
@@ -55,10 +50,6 @@ class ILPolicy(nn.Module):
         else:
             action = distribution.sample()
 
-        if args.run_type == 'eval':
-            action = action.view(args.maxAction, args.batchSize)
-            action = action[step, :].view(-1, 1)
-
         return action, rnn_hidden_states
 
     def get_value(self, *args: Any, **kwargs: Any):
@@ -71,26 +62,10 @@ class ILPolicy(nn.Module):
     def build_distribution(
         self, observations, rnn_hidden_states, prev_actions, masks
     ) -> CustomFixedCategorical:
-        if args.policy_type in ['seq2seq', 'cma', 'unet']:
+        if args.policy_type in ['seq2seq', 'cma']:
             features, rnn_hidden_states = self.net(
                 observations, rnn_hidden_states, prev_actions, masks
             )
-        elif args.policy_type in ['hcm']:
-            features, rnn_hidden_states, stop_output = self.net(
-                observations, rnn_hidden_states, prev_actions, masks
-            )
-        elif args.policy_type in ['vlnbert']:
-            features = []
-            # pbar = tqdm.tqdm(total=args.maxAction, desc='number of steps')
-            for step_idx in range(args.maxAction):
-                gc.collect()
-                torch.cuda.empty_cache()
-                feature, rnn_hidden_states = self.net(
-                    observations, rnn_hidden_states, prev_actions, masks, step_idx
-                )
-                features.append(feature.cpu())
-                # pbar.update()
-            features = torch.stack(features, dim=0).to(self.net.device)
         else:
             raise NotImplementedError
 

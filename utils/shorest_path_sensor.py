@@ -205,30 +205,3 @@ class ShortestPathSensor:
 
         return vs_token
 
-
-if __name__ == '__main__':
-    import argparse
-    import random
-    random.seed(1)
-
-    parser = argparse.ArgumentParser(description="")
-    parser.add_argument('--ori_nav_graph_path', type=str, default=str('./DATA/data/disceret/nav_graph_10/'))
-    parser.add_argument('--ori_token_dict_path', type=str, default=str('./DATA/data/disceret/token_dict_10/'))
-    parser.add_argument('--nav_graph_path', type=str, default=str('./DATA/data/disceret/processed/nav_graph_10/'))
-    parser.add_argument('--token_dict_path', type=str, default=str('./DATA/data/disceret/processed/token_dict_10/'))
-    parser.add_argument('--dagger_mode_load_scene', nargs='+', default=[4])
-    args = parser.parse_args()
-
-    # args.dagger_mode_load_scene = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26]
-    sensor = ShortestPathSensor(args.nav_graph_path, args.token_dict_path, args.dagger_mode_load_scene)
-
-    nodes = list(sensor.token_dicts[int(args.dagger_mode_load_scene[0])])
-
-    time_start = time.time()
-    for i in range(16):
-        source = random.choice(nodes)
-        target = random.choice(nodes)
-        shortest_paths = sensor.get_shortest_paths(source, target, int(args.dagger_mode_load_scene[0]))
-    time_end = time.time()
-    print('time: {}'.format(time_end - time_start))
-

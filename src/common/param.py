@@ -13,7 +13,7 @@ class Param:
         self.parser.add_argument('--project_prefix', type=str, default=str(project_prefix), help="project path")
 
         self.parser.add_argument('--run_type', type=str, default="train", help="run_type in [collect, train, eval]")
-        self.parser.add_argument('--policy_type', type=str, default="seq2seq", help="policy_type in [seq2seq, cma, hcm, unet, vlnbert]")
+        self.parser.add_argument('--policy_type', type=str, default="seq2seq", help="policy_type in [seq2seq, cma]")
         self.parser.add_argument('--collect_type', type=str, default="TF", help="seq2seq in [TF, dagger, SF]")
         self.parser.add_argument('--name', type=str, default='default', help='experiment name')
 
@@ -42,9 +42,6 @@ class Param:
         self.parser.add_argument('--dagger_p', type=float, default=1.0, help='dagger p')
 
         self.parser.add_argument('--TF_mode_load_scene', nargs='+', default=[])
-        self.parser.add_argument('--TF_test_one_scene', action="store_true")
-
-        self.parser.add_argument('--SUCCESS_DISTANCE_SCALE', type=float, default=0.3)
 
         self.parser.add_argument('--ablate_instruction', action="store_true")
         self.parser.add_argument('--ablate_rgb', action="store_true")
@@ -64,8 +61,6 @@ class Param:
         self.parser.add_argument("--simulator_tool_port", type=int, default=30000, help="simulator_tool port")
         self.parser.add_argument("--DDP_MASTER_PORT", type=int, default=20000, help="DDP MASTER_PORT")
 
-        self.parser.add_argument('--collision_sensor_disabled', action="store_false")
-
         self.parser.add_argument("--continue_start_from_dagger_it", type=int)
         self.parser.add_argument("--continue_start_from_checkpoint_path", type=str)
 
@@ -84,9 +79,9 @@ args.logger_file_name = '{}/DATA/output/{}/{}/logs/{}_{}.log'.format(args.projec
 
 
 # args.run_type = 'collect'
-assert args.run_type in ['collect', 'train', 'eval', 'seg_lmdb', 'eval_random_agent'], 'run_type error'
+assert args.run_type in ['collect', 'train', 'eval'], 'run_type error'
 # args.policy_type = 'seq2seq'
-assert args.policy_type in ['seq2seq', 'cma', 'hcm', 'unet', 'vlnbert'], 'policy_type error'
+assert args.policy_type in ['seq2seq', 'cma'], 'policy_type error'
 # args.collect_type = 'TF'
 assert args.collect_type in ['TF', 'dagger'], 'collect_type error'
 

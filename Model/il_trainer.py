@@ -7,9 +7,6 @@ from gym import Space
 
 from Model.seq2seq_policy import Seq2SeqPolicy
 from Model.cma_policy import CMAPolicy
-# from Model.hcm_policy import HCMPolicy
-# from Model.unet_policy import UNetPolicy
-# from Model.vlnbert import VLNBertPolicy
 from utils.logger import logger
 from src.common.param import args
 from Model.aux_losses import AuxLosses
@@ -83,14 +80,9 @@ class VLNCETrainer:
 
         self.policy.to(self.device)
 
-        if args.policy_type in ['vlnbert']:
-            self.optimizer = torch.optim.AdamW(
-                self.policy.parameters(), lr=args.lr
-            )
-        else:
-            self.optimizer = torch.optim.Adam(
-                self.policy.parameters(), lr=args.lr
-            )
+        self.optimizer = torch.optim.Adam(
+            self.policy.parameters(), lr=args.lr
+        )
 
         if load_from_ckpt:
             assert os.path.isfile(ckpt_path), 'ckpt_path error'
@@ -170,41 +162,6 @@ class VLNCETrainer:
                     self.policy.module.net.state_encoder.hidden_size,
                     device=self.device,
                 )
-        elif args.policy_type == 'hcm':
-            if not args.DistributedDataParallel:
-                recurrent_hidden_states = torch.zeros(
-                    self.policy.net.num_recurrent_layers,
-                    N,
-                    self.policy.net.state_encoder.hidden_size,
-                    device=self.device,
-                )
-            else:
-                recurrent_hidden_states = torch.zeros(
-                    self.policy.module.net.num_recurrent_layers,
-                    N,
-                    self.policy.module.net.state_encoder.hidden_size,
-                    device=self.device,
-                )
-        elif args.policy_type in ['unet']:
-            if not args.DistributedDataParallel:
-                recurrent_hidden_states = torch.zeros(
-                    N,
-                    self.policy.net.num_recurrent_layers,
-                    self.policy.net.output_size,
-                    device=self.device,
-                )
-            else:
-                recurrent_hidden_states = torch.zeros(
-                    N,
-                    self.policy.module.net.num_recurrent_layers,
-                    self.policy.module.net.output_size,
-                    device=self.device,
-                )
-        elif args.policy_type in ['vlnbert']:
-            if not args.DistributedDataParallel:
-                recurrent_hidden_states = None
-            else:
-                recurrent_hidden_states = None
         else:
             raise NotImplementedError
 

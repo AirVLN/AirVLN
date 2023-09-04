@@ -25,7 +25,7 @@ class InstructionEncoder(nn.Module):
 
         CN = basic_CN.clone()
 
-        if args.policy_type in ['seq2seq', 'unet', 'vlnbert']:
+        if args.policy_type in ['seq2seq']:
             CN.rnn_type = 'LSTM'
             CN.embedding_size = 50
             CN.hidden_size = 128
@@ -125,7 +125,7 @@ class InstructionBertEncoder(nn.Module):
 
         CN = basic_CN.clone()
 
-        if args.policy_type in ['seq2seq', 'unet', 'vlnbert']:
+        if args.policy_type in ['seq2seq']:
             CN.rnn_type = 'LSTM'
             CN.embedding_size = 50
             CN.hidden_size = 128
@@ -140,16 +140,6 @@ class InstructionBertEncoder(nn.Module):
             CN.embedding_size = 50
             CN.hidden_size = 128
             CN.bidirectional = True
-            CN.use_pretrained_embeddings = False
-            CN.embedding_file = None
-            CN.fine_tune_embeddings = False
-            CN.vocab_size = args.vocab_size
-            CN.final_state_only = False
-        elif args.policy_type == 'hcm':
-            CN.rnn_type = 'LSTM'
-            CN.embedding_size = 768
-            CN.hidden_size = 256
-            CN.bidirectional = False
             CN.use_pretrained_embeddings = False
             CN.embedding_file = None
             CN.fine_tune_embeddings = False

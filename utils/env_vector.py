@@ -13,6 +13,7 @@ from typing import (
 )
 import numpy as np
 import attr
+import copy
 
 from src.common.param import args
 
@@ -256,11 +257,11 @@ class VectorEnvUtil:
 
 
     def set_batch(self, batch):
-        self.batch = batch
+        self.batch = copy.deepcopy(batch)
 
         for index in range(self._num_envs):
             self._connection_write_fns[index](
-                (COMMAND_SET_BATCH, batch)
+                (COMMAND_SET_BATCH, copy.deepcopy(batch))
             )
 
         results = [
@@ -329,7 +330,7 @@ class VectorEnvUtil:
             'episode_id': item['episode_id'],
             'trajectory_id': item['trajectory_id'],
         }
-        if args.run_type in ['eval', 'eval_random_agent']:
+        if args.run_type in ['eval']:
             other_info['trajectory'] = state.trajectory
             other_info['SUCCESS_DISTANCE'] = state.SUCCESS_DISTANCE
             other_info['done'] = state.is_end
@@ -337,11 +338,7 @@ class VectorEnvUtil:
 
         state_info = {
             'distance_to_goal': state.DistanceToGoal['_metric'],
-            'oracle_navigation_error': state.OracleNavigationError['_metric'],
             'success': state.Success['_metric'],
-            'spl': state.SPL['_metric'],
-            'soft_spl': state.SoftSPL['_metric'],
-            'oracle_spl': state.OracleSPL['_metric'],
             'ndtw': state.NDTW['_metric'],
             'sdtw': state.SDTW['_metric'],
             'path_length': state.PathLength['_metric'],

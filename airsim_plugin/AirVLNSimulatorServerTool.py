@@ -13,35 +13,6 @@ import signal
 import copy
 
 
-env_id2name = {
-    1: "CityParkCollec",
-    2: "ScansUrban",
-    3: "DownTown",
-    4: "FactoryDistrict",
-    5: "AbandonedCity",
-    6: "ModularNeighborhood",
-    7: "NordicHarbour",
-    8: "slums",
-    9: "TankCleaningCenter",
-    10: "ModularEuropean",
-    11: "facades",
-    12: "IndustrialArea",
-    13: "OldTown",
-    14: "ModernCity",
-    15: "yard3",
-    16: "NYC",
-    17: "TrainStation",
-    18: "Brushify",
-    19: "Abandoned_City",
-    20: "OldShipyard",
-    21: "ContainerYard",
-    22: "SteampunkEnvironment",
-    23: "UrbanJapan",
-    24: "HongKongStreet",
-    25: "CityDowntown",
-    26: "ModularCity",
-}
-
 AIRSIM_SETTINGS_TEMPLATE = {
     "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
     "SettingsVersion": 1.2,
@@ -122,24 +93,24 @@ def create_drones(drone_num_per_env=1, show_scene=False, uav_mode=False) -> dict
                     "CaptureSettings": [
                         {
                             "ImageType": 0,
-                            "Width": IMAGE_RGB_WIDTH,
-                            "Height": IMAGE_RGB_HEIGHT,
+                            "Width": 224,
+                            "Height": 224,
                             "FOV_Degrees": 90,
                             "AutoExposureMaxBrightness": 1,
                             "AutoExposureMinBrightness": 0.03
                         },
                         {
                             "ImageType": 2,
-                            "Width": IMAGE_DEPTH_WIDTH,
-                            "Height": IMAGE_DEPTH_HEIGHT,
+                            "Width": 256,
+                            "Height": 256,
                             "FOV_Degrees": 90,
                             "AutoExposureMaxBrightness": 1,
                             "AutoExposureMinBrightness": 0.03
                         },
                         {
                             "ImageType": 3,
-                            "Width": IMAGE_DEPTH_WIDTH,
-                            "Height": IMAGE_DEPTH_HEIGHT,
+                            "Width": 256,
+                            "Height": 256,
                             "FOV_Degrees": 90,
                             "AutoExposureMaxBrightness": 1,
                             "AutoExposureMinBrightness": 0.03
@@ -406,7 +377,7 @@ class EventHandler(object):
                     return False, None
                 except:
                     return False, None
-
+        time.sleep(3)
 
         # check
         threads = []
@@ -546,8 +517,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    # =======================================================================================
-
     HOST = '127.0.0.1'
     PORT = int(args.port)
 
@@ -562,12 +531,6 @@ if __name__ == '__main__':
         gpu_list.append(int(gpu.strip()))
     GPU_IDS = gpu_list.copy()
 
-    IMAGE_RGB_WIDTH = 224
-    IMAGE_RGB_HEIGHT = 224
-    IMAGE_DEPTH_WIDTH = 256
-    IMAGE_DEPTH_HEIGHT = 256
-
-    # =======================================================================================
 
     addr, server, thread = serve()
     print(f"start listening \t{addr._host}:{addr._port}")

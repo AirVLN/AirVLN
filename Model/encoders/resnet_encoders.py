@@ -194,7 +194,7 @@ class VlnResnetDepthEncoder(nn.Module):
     ):
         super().__init__()
 
-        if args.policy_type in ['seq2seq', 'unet', 'vlnbert']:
+        if args.policy_type in ['seq2seq']:
             output_size = 128; self._output_size = output_size
             checkpoint = str(Path(args.project_prefix) / 'DATA/models/ddppo-models/gibson-2plus-resnet50.pth')
             backbone = "resnet50"
@@ -202,7 +202,7 @@ class VlnResnetDepthEncoder(nn.Module):
             normalize_visual_inputs = False
             trainable = False
             spatial_output = False
-        elif args.policy_type in ['cma', 'hcm']:
+        elif args.policy_type in ['cma']:
             output_size = 128; self._output_size = output_size
             checkpoint = str(Path(args.project_prefix) / 'DATA/models/ddppo-models/gibson-2plus-resnet50.pth')
             backbone = "resnet50"
@@ -318,10 +318,10 @@ class TorchVisionResNet50(nn.Module):
     ):
         super().__init__()
 
-        if args.policy_type in ['seq2seq', 'unet', 'vlnbert']:
+        if args.policy_type in ['seq2seq']:
             output_size = 256; self._output_size = output_size
             spatial_output = False
-        elif args.policy_type in ['cma', 'hcm']:
+        elif args.policy_type in ['cma']:
             output_size = 256; self._output_size = output_size
             spatial_output = True
         else:
@@ -459,10 +459,10 @@ class TorchVisionResNet50Place365(nn.Module):
     ):
         super().__init__()
 
-        if args.policy_type in ['seq2seq', 'unet', 'vlnbert']:
+        if args.policy_type in ['seq2seq']:
             output_size = 256; self._output_size = output_size
             spatial_output = False
-        elif args.policy_type in ['cma', 'hcm']:
+        elif args.policy_type in ['cma']:
             output_size = 256; self._output_size = output_size
             spatial_output = True
         else:
