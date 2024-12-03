@@ -1,69 +1,69 @@
+# 🚁 **AerialVLN: Vision-and-Language Navigation for UAVs**
 
-# <img src="./files/drone.png" width="50" height="20" /> AerialVLN: Vision-and-language Navigation for UAVs
+[![GitHub stars](https://img.shields.io/github/stars/AirVLN/AirVLN?style=social)](https://github.com/AirVLN/AirVLN) 
+[![License](https://img.shields.io/github/license/AirVLN/AirVLN)](LICENSE) 
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/AirVLN/AirVLN/actions)
 
-[Code](https://github.com/AirVLN/AirVLN) | [Paper](https://arxiv.org/abs/2308.06735) | [Data](https://github.com/AirVLN/AirVLN)
+---
 
-**Official implementation of the ICCV 2023 paper:**
-[AerialVLN: Vision-and-language Navigation for UAVs](https://arxiv.org/abs/2308.06735)
+## 📖 **Table of Contents**
+1. [Introduction](#introduction)
+2. [Features](#features)
+3. [Getting Started](#getting-started)
+4. [Simulator & Dataset](#dataset--simulator)
+5. [Example Usage](#example-usage)
+6. [Citation](#citation)
+7. [Contact](#contact)
 
-Shubo LIU*, Hongsheng ZHANG*, Yuankai QI, Peng WANG, Yanning ZHANG, Qi WU
+此外，你也可以参阅[本页面的中文版本](https://github.com/AirVLN/AirVLN/blob/main/README-ZH.md)
 
+---
 
-![Instruction: Take off, fly through the tower of cable bridge and down to the end of the road. Turn left, fly over the five-floor building with a yellow shop sign and down to the intersection on the left. Head to the park and turn right, fly along the edge of the park. March forward, at the intersection turn right, and finally land in front of the building with a red billboard on its rooftop.](./files/instruction_graph.jpg)
-Instruction: Take off, fly through the tower of cable bridge and down to the end of the road. Turn left, fly over the five-floor building with a yellow shop sign and down to the intersection on the left. Head to the park and turn right, fly along the edge of the park. March forward, at the intersection turn right, and finally land in front of the building with a red billboard on its rooftop.
-
-
-## Abstract
+## 🌟 **Introduction**
 
 Recently emerged Vision-and-Language Navigation (VLN) tasks have drawn significant attention in both computer vision and natural language processing communities. Existing VLN tasks are built for agents that navigate on the ground, either indoors or outdoors. However, many tasks require intelligent agents to carry out in the sky, such as UAV-based goods delivery, traffic/security patrol, and scenery tour, to name a few. Navigating in the sky is more complicated than on the ground because agents need to consider the flying height and more complex spatial relationship reasoning. To fill this gap and facilitate research in this field, we propose a new task named AerialVLN, which is UAV-based and towards outdoor environments. We develop a 3D simulator rendered by near-realistic pictures of 25 city-level scenarios. Our simulator supports continuous navigation, environment extension and configuration. We also proposed an extended baseline model based on the widely-used cross-modal-alignment (CMA) navigation methods. We find that there is still a significant gap between the baseline model and human performance, which suggests AerialVLN is a new challenging task.
 
-[Code](https://github.com/AirVLN/AirVLN) | [Paper](https://arxiv.org/abs/2308.06735) | [Data](https://github.com/AirVLN/AirVLN)
+
+---
+
+## 🚀 **Features**
+
+- **Realistic 3D Simulator**: 25 city-level scenarios with lifelike imagery.
+- **Cross-Modal Alignment Model**: Advanced navigation using vision and language.
+- **Extensible Framework**: Add new environments and configurations easily.
+- **Comprehensive Dataset**: Includes AerialVLN and AerialVLN-S for training and evaluation.
+
+![AerialVLN Demo](./files/instruction_graph.jpg)
+Instruction: Take off, fly through the tower of cable bridge and down to the end of the road. Turn left, fly over the five-floor building with a yellow shop sign and down to the intersection on the left. Head to the park and turn right, fly along the edge of the park. March forward, at the intersection turn right, and finally land in front of the building with a red billboard on its rooftop.
+
+---
+
+## 🛠️ **Getting Started**
+
+### Prerequisites
+- Python 3.8+
+- Conda for environment management
 
 
-## Updates
-
-2023/08/30🔥: We release the AerialVLN dataset, code and simulators.
-
-2023/07/14: AerialVLN is accpeted by ICCV2023! 🎉
-
-
-## TODOs
-- [x] AerialVLN Dataset
-
-- [x] AerialVLN Code
-
-- [x] AerialVLN Simulators
-
-- [ ] AerialVLN Challenge
-
-
-## Installation
-
-Pleae follow the following steps to install the simulator.
-
-[Download](https://github.com/AirVLN/AirVLN/scripts/download_simulator.sh) and extract AerialVLN simulator:
+### Installation
 ```bash
-bash scripts/download_simulator.sh
-```
+# Clone the repository
+git clone https://github.com/AirVLN/AirVLN.git
+cd AirVLN
 
-[Download](https://github.com/AirVLN/AirVLN/scripts/download_dataset_aerialvln.sh) and extract AerialVLN dataset:
-```bash
-bash scripts/download_dataset_aerialvln.sh
-# if you want to use aerialvln-s dataset, run: bash download_dataset_aerialvln-s.sh instead
-```
-
-[Download](https://github.com/AirVLN/AirVLN) AerialVLN code and install environment:
-
-```bash
+# Create and activate a virtual environment
 conda create -n AerialVLN python=3.8
 conda activate AerialVLN
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
 Finally, your project dir should be like this:
 
+```bash
 - Project dir
-    - [AirVLN](https://github.com/AirVLN/AirVLN)
+    - [AirVLN](https://www.kaggle.com/datasets/shuboliu/aerialvln-simulators)
     - DATA
         - data
             - aerialvln
@@ -71,18 +71,48 @@ Finally, your project dir should be like this:
       - env_1
       - env_2
       - ...
+```
+
+## 📦 **Simulator & Dataset**
+
+For **AerialVLN simulators (~35GB)**, you may download via [Kaggle website](https://www.kaggle.com/datasets/shuboliu/aerialvln-simulators) by simplely click **Download**, or you may download them via cURL:
+```bash
+#!/bin/bash
+curl -L -o ~/Downloads/aerialvln-simulators.zip\
+  https://www.kaggle.com/api/v1/datasets/download/shuboliu/aerialvln-simulators
+```
+
+Alternatively, you may download it via kagglehub and then place it under your AerialVLN project.
+```python
+import kagglehub
+
+# Download latest version
+path = kagglehub.dataset_download("shuboliu/aerialvln")
+
+print("Path to dataset files:", path)
+```
 
 
-## Running
+For **AerialVLN and AerialVLN-S** annotated data (both less than 100M), you may via [Kaggle website for AerialVLN](https://www.kaggle.com/datasets/shuboliu/aerialvln) and [Kaggle website for AerialVLN-S](https://www.kaggle.com/datasets/shuboliu/aerialvln-s) by simplely click **Download**, or you may download them via cURL:
+```bash
+#!/bin/bash
+curl -L -o ~/Downloads/aerialvln.zip\
+  https://www.kaggle.com/api/v1/datasets/download/shuboliu/aerialvln
+```
+and 
+```bash
+#!/bin/bash
+curl -L -o ~/Downloads/aerialvln.zip\
+  https://www.kaggle.com/api/v1/datasets/download/shuboliu/aerialvln-s
+```
 
-Please see the examples in `scripts`
+## 🔧 **Example Usage**
+
+Please see the examples in [scripts](https://github.com/AirVLN/AirVLN/tree/main/scripts).
 
 
-## Question?
-Feel free to contact [Shubo LIU](mailto:shubo.liu@mail.nwpu.edu.cn) or [Hongsheng ZHANG](mailto:hongsheng.zhang@mail.nwpu.edu.cn).
 
-
-## Citing
+## 📜 **Citing**
 If you use AerialVLN in your research, please cite the following paper:
 
 ```
@@ -94,3 +124,7 @@ If you use AerialVLN in your research, please cite the following paper:
 }
 ```
 
+In addition, we have noticed that some scholars wish to apply the AerialVLN dataset and simulator to research areas beyond VLN. We fully welcome such endeavors! We also encourage you to contact [us](mailto:shubo.liu@mail.nwpu.edu.cn) and share the intended application areas of your research.
+
+## ✉️ **Contact**
+Feel free to contact [Shubo LIU](mailto:shubo.liu@mail.nwpu.edu.cn) via email [shubo.liu@mail.nwpu.edu.cn](mailto:shubo.liu@mail.nwpu.edu.cn) for more support.
