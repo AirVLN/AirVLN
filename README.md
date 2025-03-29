@@ -41,28 +41,51 @@ Instruction: Take off, fly through the tower of cable bridge and down to the end
 ## 🛠️ **Getting Started**
 
 ### Prerequisites
+- Ubuntu Operating System
+- Some NVidia GPUs
 - Python 3.8+
 - Conda for environment management
 
 
 ### Installation
 ```bash
+# Enter the workspace folder
+mkdir AirVLN_ws
+cd AirVLN_ws
+
 # Clone the repository
 git clone https://github.com/AirVLN/AirVLN.git
 cd AirVLN
 
 # Create and activate a virtual environment
-conda create -n AerialVLN python=3.8
-conda activate AerialVLN
+conda create -n AirVLN python=3.8
+conda activate AirVLN
+
+pip install pip==24.0 setuptools==63.2.0
 
 # Install dependencies
 pip install -r requirements.txt
+pip install airsim==1.7.0
+
+# Install PyTorch
+# We suggest you select the right version on https://pytorch.org/get-started/locally/
+pip install torch torchaudio torchvision
+
+pip install pytorch-transformers==1.2.0
+
+cd ..
+mkdir -p ENVs\
+  DATA/data/aerialvln\
+  DATA/data/aerialvln-s\
+  DATA/models/ddppo-models
+
+# download models, datasets and simulators and place them into the right folders
 ```
 
 Finally, your project dir should be like this:
 
 ```bash
-- Project dir
+- Project workspace
     - [AirVLN](https://www.kaggle.com/datasets/shuboliu/aerialvln-simulators)
     - DATA
         - data
@@ -74,6 +97,10 @@ Finally, your project dir should be like this:
 ```
 
 ## 📦 **Simulator & Dataset**
+
+下载https://github.com/facebookresearch/habitat-lab/tree/v0.1.7/habitat_baselines/rl/ddppo  gibson-2plus-resnet50.pth
+
+提供百度网盘地址。
 
 For **AerialVLN simulators (~35GB)**, you may download via [Kaggle website](https://www.kaggle.com/datasets/shuboliu/aerialvln-simulators) by simplely click **Download**, or you may download them via cURL:
 ```bash
