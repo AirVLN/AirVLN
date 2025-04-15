@@ -116,7 +116,7 @@ curl -L -o ~/Downloads/aerialvln-simulators.zip\
   https://www.kaggle.com/api/v1/datasets/download/shuboliu/aerialvln-simulators
 ```
 
-您还可以通过 kagglehub 下载，并将其放置到 AerialVLN 项目目录下：
+您还可以通过 kagglehub 下载，并将其放置到 `./ENVs` 目录下：
 ```bash
 import kagglehub
 
@@ -152,7 +152,7 @@ curl -L -o ~/Downloads/aerialvln.zip\
 
 ```bash
 - Project workspace
-    - [AirVLN](https://www.kaggle.com/datasets/shuboliu/aerialvln-simulators)
+    - AirVLN
     - DATA
         - data
             - aerialvln

@@ -110,7 +110,7 @@ curl -L -o ~/Downloads/aerialvln-simulators.zip\
   https://www.kaggle.com/api/v1/datasets/download/shuboliu/aerialvln-simulators
 ```
 
-Alternatively, you may download it via kagglehub and then place it under your AerialVLN project.
+Alternatively, you may download it via kagglehub and then place it under `./ENVs`.
 ```python
 import kagglehub
 
@@ -141,7 +141,7 @@ Finally, your project dir should be like this:
 
 ```bash
 - Project workspace
-    - [AirVLN](https://www.kaggle.com/datasets/shuboliu/aerialvln-simulators)
+    - AirVLN
     - DATA
         - data
             - aerialvln
