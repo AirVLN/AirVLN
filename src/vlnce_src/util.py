@@ -412,9 +412,9 @@ def get_point_angle_feature(baseViewId=0):
         if ix == 0:
             sim.newEpisode('ZMojNkEp431', '2f4d90acd4024c269fb0efe49a8ac540', 0, math.radians(-30))
         elif ix % 12 == 0:
-            sim.makeAction(0, 1.0, 1.0) # 转了一圈
+            sim.makeAction(0, 1.0, 1.0) # Turn around
         else:
-            sim.makeAction(0, 1.0, 0) # 向右旋转
+            sim.makeAction(0, 1.0, 0) # Turn right
 
         state = sim.getState()
         assert state.viewIndex == ix

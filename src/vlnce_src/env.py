@@ -351,7 +351,7 @@ class AirVLNENV:
 
     def _changeEnv(self, need_change: bool = True):
         scene_id_list = [item['scene_id'] for item in self.batch]
-        assert len(scene_id_list) == self.batch_size, '错误'
+        assert len(scene_id_list) == self.batch_size, 'error'
 
         machines_info_template = copy.deepcopy(args.machines_info)
         total_max_scene_num = 0
@@ -394,10 +394,10 @@ class AirVLNENV:
                     self.simulator_tool.run_call()
                 break
             except Exception as e:
-                logger.error("启动场景失败 {}".format(e))
+                logger.error("Failed to open scenes {}".format(e))
                 time.sleep(3)
             except:
-                logger.error('启动场景失败')
+                logger.error('Failed to open scenes')
                 time.sleep(3)
 
         self.last_scene_id_list = scene_id_list.copy()
@@ -433,7 +433,7 @@ class AirVLNENV:
         if (not args.ablate_rgb or not args.ablate_depth):
             result = self.simulator_tool.setPoses(poses=poses)
             if not result:
-                logger.error('设置位置失败')
+                logger.error('Failed to set poses')
                 self.reset_to_this_pose(poses)
 
         #
@@ -585,7 +585,7 @@ class AirVLNENV:
         if (not args.ablate_rgb or not args.ablate_depth):
             result = self.simulator_tool.setPoses(poses=poses)
             if not result:
-                logger.error('重置到此位置失败')
+                logger.error('Failed to reset to this pose')
                 self.reset_to_this_pose(poses)
 
 
@@ -619,7 +619,7 @@ class AirVLNENV:
         if (not args.ablate_rgb or not args.ablate_depth):
             result = self.simulator_tool.setPoses(poses=poses_formatted)
             if not result:
-                logger.error('设置位置失败')
+                logger.error('Failed to set poses')
                 self.reset_to_this_pose(poses_formatted)
 
         #

@@ -10,10 +10,9 @@
 1. [简介](#简介)
 2. [项目特色](#项目特色)
 3. [快速开始](#快速开始)
-4. [模拟器与数据集](#模拟器与数据集)
-5. [使用示例](#使用示例)
-6. [引用](#引用)
-7. [联系方式](#联系方式)
+4. [使用示例](#使用示例)
+5. [引用](#引用)
+6. [联系方式](#联系方式)
 
 You may refer to the [English version of this page](https://github.com/AirVLN/AirVLN/blob/main/README.md).
 
@@ -44,40 +43,71 @@ Instruction: Take off, fly through the tower of cable bridge and down to the end
 ## 🛠️ **快速开始**
 
 ### 前置条件
+- Ubuntu 操作系统
+- Nvidia GPU(s)
 - Python 3.8+
 - Conda
-- CUDA Device(s)
 
-### 安装步骤
+
+### 安装依赖
+
+#### 第1步: 创建并进入工作区文件夹
 ```bash
-# 克隆代码仓库
+mkdir AirVLN_ws
+cd AirVLN_ws
+```
+
+#### 第2步: 克隆仓库
+
+```bash
 git clone https://github.com/AirVLN/AirVLN.git
 cd AirVLN
-
-# 创建并激活虚拟环境
-conda create -n AerialVLN python=3.8
-conda activate AerialVLN
-
-# 安装依赖
-pip install -r requirements.txt
 ```
 
-最终，项目目录结构如下所示：
+#### 第3步: 创建并激活虚拟环境
 
 ```bash
-- 项目目录
-    - [AirVLN](https://www.kaggle.com/datasets/shuboliu/aerialvln-simulators) # 本代码库
-    - DATA
-        - data
-            - aerialvln # 数据集（可为AerialVLN-S)
-    - ENVs
-      - env_1 # 模拟器1
-      - env_2 # 模拟器2
-      - ...
+conda create -n AirVLN python=3.8
+conda activate AirVLN
 ```
 
-## 📦 **模拟器与数据集**
-### 模拟器下载
+#### 第4步: 安装 pip 依赖
+
+```bash
+pip install pip==24.0 setuptools==63.2.0
+pip install -r requirements.txt
+pip install airsim==1.7.0
+```
+
+#### 第5步: 安装 PyTorch 和 PyTorch Transformers
+
+Select the correct CUDA version of PyTorch on https://pytorch.org/get-started/locally/.
+```bash
+pip install torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cuxxx
+```
+
+Then install PyTorch Transformers which depends on PyTorch.
+```bash
+pip install pytorch-transformers==1.2.0
+```
+
+### 模型 & 模拟器 & 数据集
+
+#### 第6步: 为后续步骤创建目录
+
+```bash
+cd ..
+mkdir -p ENVs\
+  DATA/data/aerialvln\
+  DATA/data/aerialvln-s\
+  DATA/models/ddppo-models
+```
+
+#### 第7步: 下载预训练模型
+
+从 [这里](https://github.com/facebookresearch/habitat-lab/tree/v0.1.7/habitat_baselines/rl/ddppo) 下载 **gibson-2plus-resnet50.pth** 把它放到 `./DATA/models/ddppo-models` 目录下.
+
+#### 第8步: 下载模拟器
 
 AerialVLN 模拟器（约 35GB） 可通过 Kaggle 网站 下载，也可使用以下 cURL 命令：
 ```bash
@@ -96,8 +126,7 @@ path = kagglehub.dataset_download("shuboliu/aerialvln")
 print("数据集文件路径:", path)
 ```
 
-
-### 数据集下载
+#### 第9步: 下载数据集
 
 AerialVLN 和 AerialVLN-S 注释数据集（均小于 100MB） 可通过以下方法获取：
 
@@ -117,9 +146,56 @@ curl -L -o ~/Downloads/aerialvln.zip\
   https://www.kaggle.com/api/v1/datasets/download/shuboliu/aerialvln-s
 ```
 
+### 目录结构
+
+最终，你的项目目录应该类似于以下结构：
+
+```bash
+- Project workspace
+    - [AirVLN](https://www.kaggle.com/datasets/shuboliu/aerialvln-simulators)
+    - DATA
+        - data
+            - aerialvln
+            - aerialvln-s
+        - models
+            - ddppo-models
+    - ENVs
+      - env_1
+      - env_2
+      - ...
+```
+
 ## 🔧 **使用示例**
 
 导航脚本示例，请参考 [scripts 文件夹](https://github.com/AirVLN/AirVLN/tree/main/scripts)下的文件。
+
+## 📚 **常见问题**
+
+1. 错误:
+    ```
+    [Errno 98] Address already in use
+    Traceback (most recent call last):
+      File "./airsim_plugin/AirVLNSimulatorServerTool.py", line 535, in <module>
+        addr, server, thread = serve()
+    TypeError: cannot unpack non-iterable NoneType object
+    ```
+    解决方案：终结端口（默认30000）正在使用的进程或更改端口。
+    Solution: Kill the process that is using the port (default port is 30000) or change the port.
+
+2. 错误:
+    ```
+    - INFO - _run_command:139 - Failed to open scenes, machine 0: 127.0.0.1:30000
+    - ERROR - run:34 - Request timed out
+    - ERROR - _changeEnv:397 - Failed to open scenes Failed to open scenes
+    ```
+    解决方案：
+      * 尝试减少 batchsize（例如，设置 `--batchSize 1`）。
+      * 检查是否使用了GPU。
+    Solution: 
+      * Try reduce batchsize (e.g. set `--batchSize 1`).
+      * Check if the GPUs are used.
+
+如果上述方案都无效，您可以[提一个issue](https://github.com/AirVLN/AirVLN/issues)或[通过邮件联系我们](#contact).
 
 ## 📜 **引用**
 
