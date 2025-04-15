@@ -74,12 +74,12 @@ pip install airsim==1.7.0
 ```
 
 #### Step 5: Install PyTorch and PyTorch Transformers
-Select the correct CUDA version of PyTorch on https://pytorch.org/get-started/locally/.
+Select the correct CUDA version of PyTorch on [PyTorch official website](https://pytorch.org/get-started/locally/).
 ```bash
 pip install torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cuxxx
 ```
 
-Then install PyTorch Transformers which depends on PyTorch.
+Then install pytorch-transformers which depends on PyTorch.
 ```bash
 pip install pytorch-transformers==1.2.0
 ```

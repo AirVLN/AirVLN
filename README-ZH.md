@@ -81,12 +81,12 @@ pip install airsim==1.7.0
 
 #### 第5步: 安装 PyTorch 和 PyTorch Transformers
 
-Select the correct CUDA version of PyTorch on https://pytorch.org/get-started/locally/.
+在[ PyTorch 官网](https://pytorch.org/get-started/locally/)选择正确 CUDA 版本的 PyTorch 。
 ```bash
 pip install torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cuxxx
 ```
 
-Then install PyTorch Transformers which depends on PyTorch.
+然后安装依赖于 PyTorch 的 pytorch-transformers。
 ```bash
 pip install pytorch-transformers==1.2.0
 ```
@@ -180,7 +180,6 @@ curl -L -o ~/Downloads/aerialvln.zip\
     TypeError: cannot unpack non-iterable NoneType object
     ```
     解决方案：终结端口（默认30000）正在使用的进程或更改端口。
-    Solution: Kill the process that is using the port (default port is 30000) or change the port.
 
 2. 错误:
     ```
@@ -191,9 +190,6 @@ curl -L -o ~/Downloads/aerialvln.zip\
     解决方案：
       * 尝试减少 batchsize（例如，设置 `--batchSize 1`）。
       * 检查是否使用了GPU。
-    Solution: 
-      * Try reduce batchsize (e.g. set `--batchSize 1`).
-      * Check if the GPUs are used.
 
 如果上述方案都无效，您可以[提一个issue](https://github.com/AirVLN/AirVLN/issues)或[通过邮件联系我们](#contact).
 
