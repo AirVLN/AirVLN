@@ -7,6 +7,7 @@ import copy
 import numpy as np
 import cv2
 import os
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     import sys
@@ -58,32 +59,15 @@ class AirVLNSimulatorClientTool:
 
     def _confirmSocketConnection(self, socket_client: msgpackrpc.Client) -> bool:
         try:
-            # Attempt to call a non-existent method to verify if the connection is working
-            socket_client.call('__connect_check__')
-            # If no exception is raised (theoretically, it should not reach here)
+            socket_client.call('ping')
+            logger.info("Connected\t{}:{}".format(socket_client.address._host, socket_client.address._port))
             return True
-        except msgpackrpc.error.RPCError as e:
-            # An RPC error indicates that the connection was successful, but the method does not exist, which means the connection is valid
-            return True
-        except msgpackrpc.error.TransportError as e:
-            # A transport error indicates a failed connection (e.g., timeout, refused, etc.)
-            logger.error(f"Socket connection failed: {str(e)}")
+        except:
+            try:
+                logger.error("Ping returned false\t{}:{}".format(socket_client.address._host, socket_client.address._port))
+            except:
+                logger.error('Ping returned false')
             return False
-        except Exception as e:
-            # Other unknown exceptions
-            logger.error(f"An unknown error occurred while confirming the Socket connection: {str(e)}")
-            return False
-        
-        # try:
-        #     socket_client.call('ping')
-        #     print("Connected\t{}:{}".format(socket_client.address._host, socket_client.address._port))
-        #     return True
-        # except:
-        #     try:
-        #         print("Ping returned false\t{}:{}".format(socket_client.address._host, socket_client.address._port))
-        #     except:
-        #         print('Ping returned false')
-        #     return False
 
     def _confirmConnection(self) -> None:
         for index_1, _ in enumerate(self.airsim_clients):
@@ -319,6 +303,18 @@ class AirVLNSimulatorClientTool:
 
                     if time_sleep_cnt > 20:
                         raise Exception('Failed to retrieve image')
+
+            # Tip: Before using AirVLN code, please confirm that the channel order 
+            #       of the images captured is as expected by visualization!
+            # Example is as below:
+
+            # plt.imsave('./tmp/img_rgb.png', img_rgb)
+
+            # img_rgb = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2RGB)
+
+            # plt.imsave('./tmp/img_rgb_converted.png', img_rgb)
+
+            # plt.imsave('./tmp/img_depth.png', img_depth.squeeze(), cmap='gray')
 
             return img_rgb, img_depth
 

@@ -169,6 +169,8 @@ curl -L -o ~/Downloads/aerialvln.zip\
 
 导航脚本示例，请参考 [scripts 文件夹](https://github.com/AirVLN/AirVLN/tree/main/scripts)下的文件。
 
+*提示：使用AirVLN代码之前请通过可视化确认在[AirVLNSimulatorClientTool.py](https://github.com/AirVLN/AirVLN/blob/main/airsim_plugin/AirVLNSimulatorClientTool.py)中函数`_getImages`获取的图像的通道顺序符合预期！*
+
 ## 📚 **常见问题**
 
 1. 错误:
