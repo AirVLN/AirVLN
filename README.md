@@ -160,7 +160,7 @@ Finally, your project dir should be like this:
 
 Please see the examples in [scripts](https://github.com/AirVLN/AirVLN/tree/main/scripts).
 
-*Tip: Before using AirVLN code, please confirm that the channel order of the images captured in function `_getImages` of [AirVLNSimulatorClientTool.py](https://github.com/AirVLN/AirVLN/blob/main/airsim_plugin/AirVLNSimulatorClientTool.py) is as expected by visualization!*
+*Tip: If you are using AirVLN code for the first time, please confirm that the channel order of the images captured in function `_getImages` of [AirVLNSimulatorClientTool.py](https://github.com/AirVLN/AirVLN/blob/main/airsim_plugin/AirVLNSimulatorClientTool.py) is as expected by visualization!*
 
 ## 📚 **Common Errors**
 

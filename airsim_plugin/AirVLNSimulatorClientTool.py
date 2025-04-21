@@ -304,8 +304,8 @@ class AirVLNSimulatorClientTool:
                     if time_sleep_cnt > 20:
                         raise Exception('Failed to retrieve image')
 
-            # Tip: Before using AirVLN code, please confirm that the channel order 
-            #       of the images captured is as expected by visualization!
+            # Tip: If you are using AirVLN code for the first time, please confirm that the
+            #       channel order of the images captured is as expected by visualization!
             # Example is as below:
 
             # plt.imsave('./tmp/img_rgb.png', img_rgb)
