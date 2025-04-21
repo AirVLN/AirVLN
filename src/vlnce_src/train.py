@@ -1016,7 +1016,7 @@ def eval_vlnce():
 
     tok = initialize_tokenizer()
 
-    assert os.path.exists(args.EVAL_CKPT_PATH_DIR), 'The eval file (folder) does not exist'
+    assert os.path.exists(args.EVAL_CKPT_PATH_DIR), 'The eval file/folder does not exist'
     if os.path.isfile(args.EVAL_CKPT_PATH_DIR):
         from Model.utils.common import get_checkpoint_id
 

@@ -13,6 +13,7 @@
 4. [使用示例](#使用示例)
 5. [引用](#引用)
 6. [联系方式](#联系方式)
+7. [致谢](#致谢)
 
 You may refer to the [English version of this page](https://github.com/AirVLN/AirVLN/blob/main/README.md).
 
@@ -193,7 +194,7 @@ curl -L -o ~/Downloads/aerialvln.zip\
       * 尝试减少 batchsize（例如，设置 `--batchSize 1`）。
       * 检查是否使用了GPU。
 
-如果上述方案都无效，您可以[提一个issue](https://github.com/AirVLN/AirVLN/issues)或[通过邮件联系我们](#contact).
+如果上述方案都无效，您可以[提一个issue](https://github.com/AirVLN/AirVLN/issues)或[通过邮件联系我们](#联系方式).
 
 ## 📜 **引用**
 
@@ -210,5 +211,8 @@ curl -L -o ~/Downloads/aerialvln.zip\
 
 此外，我们注意到有些学者希望将AerialVLN数据集及其仿真器应用于除VLN以外的其他研究领域，我们欢迎这样的做法！我们同样欢迎您与我们联络告知[我们](mailto:shubo.liu@mail.nwpu.edu.cn)您的拟应用领域。
 
-## ✉️ **Contact**
+## ✉️ **联系方式**
 如果您有任何问题，请联络： [Shubo LIU](mailto:shubo.liu@mail.nwpu.edu.cn)
+
+## 🥰 **致谢**
+* 我们使用了[Habitat](https://github.com/facebookresearch/habitat-lab)的预训练模型. 衷心感谢。

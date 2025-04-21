@@ -13,6 +13,7 @@
 4. [Example Usage](#example-usage)
 5. [Citation](#citation)
 6. [Contact](#contact)
+7. [Acknowledgement](#acknowledgement)
 
 此外，你也可以参阅[本页面的中文版本](https://github.com/AirVLN/AirVLN/blob/main/README-ZH.md)
 
@@ -200,3 +201,6 @@ In addition, we have noticed that some scholars wish to apply the AerialVLN data
 
 ## ✉️ **Contact**
 Feel free to contact [Shubo LIU](mailto:shubo.liu@mail.nwpu.edu.cn) via email [shubo.liu@mail.nwpu.edu.cn](mailto:shubo.liu@mail.nwpu.edu.cn) for more support.
+
+## 🥰 **Acknowledgement**
+* We used a pretrained model from [Habitat](https://github.com/facebookresearch/habitat-lab). Thanks sincerely.
