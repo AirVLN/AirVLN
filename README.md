@@ -11,9 +11,10 @@
 2. [Features](#features)
 3. [Getting Started](#getting-started)
 4. [Example Usage](#example-usage)
-5. [Citation](#citation)
-6. [Contact](#contact)
-7. [Acknowledgement](#acknowledgement)
+5. [Common Errors](#common-errors)
+6. [Citation](#citation)
+7. [Contact](#contact)
+8. [Acknowledgement](#acknowledgement)
 
 此外，你也可以参阅[本页面的中文版本](https://github.com/AirVLN/AirVLN/blob/main/README-ZH.md)
 
