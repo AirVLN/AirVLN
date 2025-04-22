@@ -292,7 +292,7 @@ class EventHandler(object):
 
     def _open_scenes(self, ip: str , scen_ids: list):
         print(
-            "{}\t关闭场景中".format(
+            "{}\tSTART closing scenes ".format(
                 str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())),
             )
         )
@@ -300,7 +300,7 @@ class EventHandler(object):
         self.scene_used_ports = []
         # KillAirVLN()
         print(
-            "{}\t已关闭所有场景".format(
+            "{}\tEND closing scenes ".format(
                 str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())),
             )
         )
@@ -385,7 +385,7 @@ class EventHandler(object):
         def _check_scene(index, p):
             if p is None:
                 print(
-                    "{}\t打开第{}个场景(场景{})\tgpu:{}".format(
+                    "{}\tOpening {}-th scene (scene {})\tgpu:{}".format(
                         str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())),
                         index,
                         None,
@@ -406,7 +406,7 @@ class EventHandler(object):
                 pass
 
             print(
-                "{}\t打开第{}个场景(场景{})\tgpu:{}".format(
+                "{}\tOpening {}-th scene (scene {})\tgpu:{}".format(
                     str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())),
                     index,
                     scen_ids[index],

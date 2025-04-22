@@ -7,8 +7,17 @@ import copy
 import numpy as np
 import cv2
 import os
+import matplotlib.pyplot as plt
 
-from src.common.param import args
+if __name__ == '__main__':
+    import sys
+    cur_path=os.path.abspath(os.path.dirname(__file__))
+    sys.path.insert(0, cur_path+"/..")
+    print(os.getcwd())
+    from src.common.param import args
+else:
+    from src.common.param import args
+
 from utils.logger import logger
 
 
@@ -51,13 +60,13 @@ class AirVLNSimulatorClientTool:
     def _confirmSocketConnection(self, socket_client: msgpackrpc.Client) -> bool:
         try:
             socket_client.call('ping')
-            print("Connected\t{}:{}".format(socket_client.address._host, socket_client.address._port))
+            logger.info("Connected\t{}:{}".format(socket_client.address._host, socket_client.address._port))
             return True
         except:
             try:
-                print("Ping returned false\t{}:{}".format(socket_client.address._host, socket_client.address._port))
+                logger.error("Ping returned false\t{}:{}".format(socket_client.address._host, socket_client.address._port))
             except:
-                print('Ping returned false')
+                logger.error('Ping returned false')
             return False
 
     def _confirmConnection(self) -> None:
@@ -111,25 +120,29 @@ class AirVLNSimulatorClientTool:
         self._closeConnection()
 
         def _run_command(index, socket_client: msgpackrpc.Client):
-            logger.info(f'开始打开场景，机器{index}: {socket_client.address._host}:{socket_client.address._port}')
+            logger.info(f'Failed to open scenes, machine {index}: {socket_client.address._host}:{socket_client.address._port}')
             result = socket_client.call('reopen_scenes', socket_client.address._host, self.machines_info[index]['open_scenes'])
 
             if result[0] == False:
-                logger.error(f'打开场景失败，机器: {socket_client.address._host}:{socket_client.address._port}')
-                raise Exception('打开场景失败')
-            assert len(result[1]) == 2, '打开场景失败'
+                logger.error(f'Failed to open scenes, machine : {socket_client.address._host}:{socket_client.address._port}')
+                raise Exception('Failed to open scenes')
+            assert len(result[1]) == 2, 'Failed to open scenes'
 
             ip = result[1][0]
             ports = result[1][1]
-            assert str(ip) == str(socket_client.address._host), '打开场景失败'
-            assert len(ports) == len(self.machines_info[index]['open_scenes']), '打开场景失败'
+
+            if isinstance(ip, bytes):
+                ip = ip.decode()
+
+            assert str(ip) == str(socket_client.address._host), 'Failed to open scenes'
+            assert len(ports) == len(self.machines_info[index]['open_scenes']), 'Failed to open scenes'
             for i, port in enumerate(ports):
                 if self.machines_info[index]['open_scenes'][i] is None:
                     self.airsim_clients[index][i] = None
                 else:
                     self.airsim_clients[index][i] = airsim.VehicleClient(ip=ip, port=port, timeout_value=airsim_timeout)
 
-            logger.info(f'打开场景完毕，机器{index}: {socket_client.address._host}:{socket_client.address._port}')
+            logger.info(f'Failed to open scenes, machine {index}: {socket_client.address._host}:{socket_client.address._port}')
             return
 
         threads = []
@@ -148,11 +161,11 @@ class AirVLNSimulatorClientTool:
             thread_results.append(thread.flag_ok)
         threads = []
         if not (np.array(thread_results) == True).all():
-            raise Exception('打开场景失败')
+            raise Exception('Failed to open scenes')
 
         after = time.time()
         diff = after - before
-        logger.info(f"启动时间：{diff}")
+        logger.info(f"Start time: {diff}")
 
         self._confirmConnection()
         self._closeSocketConnection()
@@ -201,16 +214,16 @@ class AirVLNSimulatorClientTool:
                         img_depth = None
 
                         if get_rgb:
-                            assert response_rgb.height == args.Image_Height_RGB and response_rgb.width == args.Image_Width_RGB, 'RGB图片获取错误'
+                            assert response_rgb.height == args.Image_Height_RGB and response_rgb.width == args.Image_Width_RGB, 'Failed to retrieve RGB image'
 
                             img1d = np.frombuffer(response_rgb.image_data_uint8, dtype=np.uint8)
                             if args.run_type not in ['eval']:
-                                assert not (img1d.flatten()[0] == img1d).all(), 'RGB图片获取错误'
+                                assert not (img1d.flatten()[0] == img1d).all(), 'Failed to retrieve RGB image'
                             img_rgb = img1d.reshape(response_rgb.height, response_rgb.width, 3)
                             img_rgb = np.array(img_rgb)
 
                         if get_depth:
-                            assert response_depth.height == args.Image_Height_DEPTH and response_depth.width == args.Image_Width_DEPTH, 'DEPTH图片获取错误'
+                            assert response_depth.height == args.Image_Height_DEPTH and response_depth.width == args.Image_Width_DEPTH, 'Failed to retrieve DEPTH image'
 
                             png_file_name = '/tmp/AirVLN_depth_{}_{}.png'.format(time.time(), random.randint(0, 10000))
                             airsim.write_file(png_file_name, response_depth.image_data_uint8)
@@ -228,12 +241,12 @@ class AirVLNSimulatorClientTool:
                         break
                     except:
                         time_sleep_cnt += 1
-                        logger.error("图片获取错误")
+                        logger.error("Image retrieval error")
                         logger.error('time_sleep_cnt: {}'.format(time_sleep_cnt))
                         time.sleep(1)
 
                     if time_sleep_cnt > 20:
-                        raise Exception('图片获取失败')
+                        raise Exception('Failed to retrieve image')
 
             else:
                 time_sleep_cnt = 0
@@ -262,18 +275,18 @@ class AirVLNSimulatorClientTool:
                             break
 
                         if get_rgb:
-                            assert response_rgb.height == args.Image_Height_RGB and response_rgb.width == args.Image_Width_RGB, 'RGB图片获取错误'
+                            assert response_rgb.height == args.Image_Height_RGB and response_rgb.width == args.Image_Width_RGB, 'Failed to retrieve RGB image'
 
                             img1d = np.frombuffer(response_rgb.image_data_uint8, dtype=np.uint8)
                             img_rgb = img1d.reshape(response_rgb.height, response_rgb.width, 3)
                             img_rgb = np.array(img_rgb)
 
                         if get_depth:
-                            assert response_depth.height == args.Image_Height_DEPTH and response_depth.width == args.Image_Width_DEPTH, 'DEPTH图片获取错误'
+                            assert response_depth.height == args.Image_Height_DEPTH and response_depth.width == args.Image_Width_DEPTH, 'Failed to retrieve DEPTH image'
 
                             depth_img_in_meters = airsim.list_to_2d_float_array(response_depth.image_data_float, response_depth.width, response_depth.height)
                             if depth_img_in_meters.min() < 1e4:
-                                assert not (depth_img_in_meters.flatten()[0] == depth_img_in_meters).all(), 'DEPTH图片获取错误'
+                                assert not (depth_img_in_meters.flatten()[0] == depth_img_in_meters).all(), 'Failed to retrieve DEPTH image'
                             depth_img_in_meters = depth_img_in_meters.reshape(response_depth.height, response_depth.width, 1)
 
                             obs_depth_img = np.clip(depth_img_in_meters, 0, 100)
@@ -284,12 +297,24 @@ class AirVLNSimulatorClientTool:
                         break
                     except:
                         time_sleep_cnt += 1
-                        logger.error("图片获取错误")
+                        logger.error("Failed to retrieve image")
                         logger.error('time_sleep_cnt: {}'.format(time_sleep_cnt))
                         time.sleep(1)
 
                     if time_sleep_cnt > 20:
-                        raise Exception('图片获取失败')
+                        raise Exception('Failed to retrieve image')
+
+            # Tip: If you are using AirVLN code for the first time, please confirm that the
+            #       channel order of the images captured is as expected by visualization!
+            # Example is as below:
+
+            # plt.imsave('./tmp/img_rgb.png', img_rgb)
+
+            # img_rgb = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2RGB)
+
+            # plt.imsave('./tmp/img_rgb_converted.png', img_rgb)
+
+            # plt.imsave('./tmp/img_depth.png', img_depth.squeeze(), cmap='gray')
 
             return img_rgb, img_depth
 
@@ -319,7 +344,7 @@ class AirVLNSimulatorClientTool:
                 thread_results.append(threads[index_1][index_2].flag_ok)
         threads = []
         if not (np.array(thread_results) == True).all():
-            logger.error('getImageResponses失败')
+            logger.error('getImageResponses failed')
             return None
 
         return responses
@@ -359,7 +384,7 @@ class AirVLNSimulatorClientTool:
                 thread_results.append(threads[index_1][index_2].flag_ok)
         threads = []
         if not (np.array(thread_results) == True).all():
-            logger.error('setPoses失败')
+            logger.error('setPoses failed')
             return False
 
         return True
@@ -383,9 +408,9 @@ class AirVLNSimulatorClientTool:
             self._closeConnection()
 
             def _run_command(index, socket_client: msgpackrpc.Client):
-                logger.info(f'开始关闭所有场景，机器{index}: {socket_client.address._host}:{socket_client.address._port}')
+                logger.info(f'START closing all scenes, machine {index}: {socket_client.address._host}:{socket_client.address._port}')
                 result = socket_client.call('close_scenes', socket_client.address._host)
-                logger.info(f'关闭所有场景完毕，机器{index}: {socket_client.address._host}:{socket_client.address._port}')
+                logger.info(f'END closing all scenes, machine {index}: {socket_client.address._host}:{socket_client.address._port}')
                 return
 
             threads = []
@@ -411,10 +436,18 @@ if __name__ == '__main__':
         {
             'MACHINE_IP': '127.0.0.1',
             'SOCKET_PORT': 30000,
-            'MAX_SCENE_NUM': 8,
-            'open_scenes': [1, 2, 3, 4, 5, 6, 7, None],
+            'MAX_SCENE_NUM': 1,
+            'open_scenes': [1],
         },
     ]
+    # machines_info_xxx = [
+    #     {
+    #         'MACHINE_IP': '127.0.0.1',
+    #         'SOCKET_PORT': 30000,
+    #         'MAX_SCENE_NUM': 8,
+    #         'open_scenes': [1, 2, 3, 4, 5, 6, 7, None],
+    #     },
+    # ]
 
     tool = AirVLNSimulatorClientTool(machines_info=machines_info_xxx)
     tool.run_call()

@@ -882,7 +882,7 @@ def collect_data(trainer, train_env, data_it=0):
             copytree_dst = str(Path(str(train_env.lmdb_features_dir)).parent.parent / str(copytree_dst))
             shutil.copytree(copytree_src, copytree_dst, dirs_exist_ok=True)
         except:
-            logger.warning('备份失败 dagger_it: {}'.format(dagger_it))
+            logger.warning('Failed to backup dagger_it: {}'.format(dagger_it))
 
     try:
         train_env.simulator_tool.closeScenes()
@@ -1088,7 +1088,7 @@ def eval_vlnce():
 
     tok = initialize_tokenizer()
 
-    assert os.path.exists(args.EVAL_CKPT_PATH_DIR), '评估文件(夹)不存在'
+    assert os.path.exists(args.EVAL_CKPT_PATH_DIR), 'The eval file/folder does not exist'
     if os.path.isfile(args.EVAL_CKPT_PATH_DIR):
         from Model.utils.common import get_checkpoint_id
 
