@@ -182,7 +182,8 @@ Please see the examples in [scripts](https://github.com/AirVLN/AirVLN/tree/main/
     ```
     Solution: 
       * Try reduce batchsize (e.g. set `--batchSize 1`).
-      * Check if the GPUs are used.
+      * Make sure the GPUs are used.
+      * Make sure you can open the AirSim scenes in `.\ENVs`.
 
 If the solutions above do not help, you can [open an issue](https://github.com/AirVLN/AirVLN/issues) or [contact us via email](#contact).
 
