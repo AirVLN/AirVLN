@@ -172,7 +172,7 @@ Please see the examples in [scripts](https://github.com/AirVLN/AirVLN/tree/main/
         addr, server, thread = serve()
     TypeError: cannot unpack non-iterable NoneType object
     ```
-    Solution: Kill the process that is using the port (default port is 30000) or change the port.
+    Possible Solution: Kill the process that is using the port (default port is 30000) or change the port.
 
 2. Error:
     ```
@@ -180,7 +180,7 @@ Please see the examples in [scripts](https://github.com/AirVLN/AirVLN/tree/main/
     - ERROR - run:34 - Request timed out
     - ERROR - _changeEnv:397 - Failed to open scenes Failed to open scenes
     ```
-    Solution: 
+    Possible Solutions: 
       * Try reduce batchsize (e.g. set `--batchSize 1`).
       * Make sure the GPUs are used.
       * Make sure you can open the AirSim scenes in `.\ENVs`.
