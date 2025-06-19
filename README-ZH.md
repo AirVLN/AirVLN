@@ -183,7 +183,7 @@ curl -L -o ~/Downloads/aerialvln.zip\
         addr, server, thread = serve()
     TypeError: cannot unpack non-iterable NoneType object
     ```
-    解决方案：终结端口（默认30000）正在使用的进程或更改端口。
+    可能的解决方案：终结端口（默认30000）正在使用的进程或更改端口。
 
 2. 错误:
     ```
@@ -191,9 +191,10 @@ curl -L -o ~/Downloads/aerialvln.zip\
     - ERROR - run:34 - Request timed out
     - ERROR - _changeEnv:397 - Failed to open scenes Failed to open scenes
     ```
-    解决方案：
+    可能的解决方案：
       * 尝试减少 batchsize（例如，设置 `--batchSize 1`）。
-      * 检查是否使用了GPU。
+      * 确保使用了GPU。
+      * 确保可以单独打开`./ENVs`文件夹中的Airsim场景。
 
 如果上述方案都无效，您可以[提一个issue](https://github.com/AirVLN/AirVLN/issues)或[通过邮件联系我们](#联系方式).
 
