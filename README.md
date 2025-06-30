@@ -183,7 +183,7 @@ Please see the examples in [scripts](https://github.com/AirVLN/AirVLN/tree/main/
     Possible Solutions: 
       * Try reduce batchsize (e.g. set `--batchSize 1`).
       * Make sure the GPUs are used.
-      * Make sure you can open the AirSim scenes in `./ENVs`.
+      * Make sure you can open the AirSim scenes in `./ENVs`, whether in headless (virtual display) mode or not.
 
 If the solutions above do not help, you can [open an issue](https://github.com/AirVLN/AirVLN/issues) or [contact us via email](#contact).
 
