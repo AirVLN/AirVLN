@@ -194,7 +194,7 @@ curl -L -o ~/Downloads/aerialvln.zip\
     可能的解决方案：
       * 尝试减少 batchsize（例如，设置 `--batchSize 1`）。
       * 确保使用了GPU。
-      * 确保可以单独打开`./ENVs`文件夹中的Airsim场景。
+      * 确保可以单独打开`./ENVs`文件夹中的Airsim场景。如果服务器不支持GUI，您可以采用无头模式或虚拟显示。
 
 如果上述方案都无效，您可以[提一个issue](https://github.com/AirVLN/AirVLN/issues)或[通过邮件联系我们](#联系方式).
 
