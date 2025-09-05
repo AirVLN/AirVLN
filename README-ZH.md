@@ -214,7 +214,7 @@ curl -L -o ~/Downloads/aerialvln.zip\
 此外，我们注意到有些学者希望将AerialVLN数据集及其仿真器应用于除VLN以外的其他研究领域，我们欢迎这样的做法！我们同样欢迎您与我们联络告知[我们](#contact)您的拟应用领域。
 
 ## ✉️ **联系方式**
-如果您有任何问题，请联络： [Shubo LIU](mailto:shubo.liu@mail.nwpu.edu.cn)（请也抄送到助理学生的邮箱[omige@mail.nwpu.edu.cn](mailto:omige@mail.nwpu.edu.cn)）
+如果您有任何问题，请联络： [Shubo LIU](mailto:shubo.liu@mail.nwpu.edu.cn)
 
 ## 🥰 **致谢**
 * 我们使用了[Habitat](https://github.com/facebookresearch/habitat-lab)的预训练模型. 衷心感谢。
