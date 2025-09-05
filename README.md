@@ -202,7 +202,7 @@ If you use AerialVLN in your research, please cite the following paper:
 In addition, we have noticed that some scholars wish to apply the AerialVLN dataset and simulator to research areas beyond VLN. We fully welcome such endeavors! We also encourage you to contact [us](#contact) and share the intended application areas of your research.
 
 ## ✉️ **Contact**
-Feel free to contact Shubo LIU via email [shubo.liu@mail.nwpu.edu.cn](mailto:shubo.liu@mail.nwpu.edu.cn) for more support (please also cc to the assistant student's email [omige@mail.nwpu.edu.cn](mailto:omige@mail.nwpu.edu.cn)).
+Feel free to contact Shubo LIU via email [shubo.liu@mail.nwpu.edu.cn](mailto:shubo.liu@mail.nwpu.edu.cn) for more support.
 
 ## 🥰 **Acknowledgement**
 * We used a pretrained model from [Habitat](https://github.com/facebookresearch/habitat-lab). Thanks sincerely.
