@@ -122,6 +122,8 @@ path = kagglehub.dataset_download("shuboliu/aerialvln")
 print("Path to dataset files:", path)
 ```
 
+Alternative download link: [Baidu Netdisk (pwd=vbv9)](https://pan.baidu.com/s/1IB9OjWXG2nDDdjwCdjVxBw?pwd=vby9)
+
 #### Step 9: Download Datasets
 
 For **AerialVLN and AerialVLN-S** annotated data (both less than 100M), you may via [Kaggle website for AerialVLN](https://www.kaggle.com/datasets/shuboliu/aerialvln) and [Kaggle website for AerialVLN-S](https://www.kaggle.com/datasets/shuboliu/aerialvln-s) by simplely click **Download**, or you may download them via cURL:
@@ -136,6 +138,8 @@ and
 curl -L -o ~/Downloads/aerialvln.zip\
   https://www.kaggle.com/api/v1/datasets/download/shuboliu/aerialvln-s
 ```
+
+Alternative download link: [Baidu Netdisk (pwd=cgwh)](https://pan.baidu.com/s/1mhNeqDjipXULMa2PfTaZKQ?pwd=cgwh)
 
 ### Directory Structure
 
