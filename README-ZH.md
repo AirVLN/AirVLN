@@ -128,6 +128,8 @@ path = kagglehub.dataset_download("shuboliu/aerialvln")
 print("数据集文件路径:", path)
 ```
 
+其它下载链接: [百度网盘 (提取码=vbv9)](https://pan.baidu.com/s/1IB9OjWXG2nDDdjwCdjVxBw?pwd=vby9)
+
 #### 第9步: 下载数据集
 
 AerialVLN 和 AerialVLN-S 注释数据集（均小于 100MB） 可通过以下方法获取：
@@ -147,6 +149,8 @@ curl -L -o ~/Downloads/aerialvln.zip\
 curl -L -o ~/Downloads/aerialvln.zip\
   https://www.kaggle.com/api/v1/datasets/download/shuboliu/aerialvln-s
 ```
+
+其它下载链接: [百度网盘 (提取码=cgwh)](https://pan.baidu.com/s/1mhNeqDjipXULMa2PfTaZKQ?pwd=cgwh)
 
 ### 目录结构
 
